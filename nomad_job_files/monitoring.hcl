@@ -1,15 +1,15 @@
-job "faas-monitoring" {
+job "monitoring" {
   datacenters = ["dc1"]
 
   type = "service"
-  
+
   constraint {
     attribute = "${attr.cpu.arch}"
     operator  = "!="
     value     = "arm"
   }
 
-  group "faas-monitoring" {
+  group "monitoring" {
     count = 1
 
     restart {
@@ -36,7 +36,7 @@ job "faas-monitoring" {
       }
 
       config {
-        image = "prom/alertmanager:v0.9.1"
+        image = "prom/alertmanager:v0.15.0"
 
         port_map {
           http = 9093
@@ -45,8 +45,8 @@ job "faas-monitoring" {
         dns_servers = ["${NOMAD_IP_http}", "8.8.8.8", "8.8.8.4"]
 
         args = [
-          "-config.file=/etc/alertmanager/alertmanager.yml",
-          "-storage.path=/alertmanager",
+          "--config.file=/etc/alertmanager/alertmanager.yml",
+          "--storage.path=/alertmanager",
         ]
 
         volumes = [
@@ -68,7 +68,7 @@ job "faas-monitoring" {
       service {
         port = "http"
         name = "alertmanager"
-        tags = ["faas"]
+        tags = ["monitoring"]
       }
     }
 
@@ -80,7 +80,7 @@ job "faas-monitoring" {
 			  destination = "local/prometheus.yml.tpl"
 				mode        = "file"
 			}
-			
+
 			artifact {
 			  source      = "https://raw.githubusercontent.com/hashicorp/faas-nomad/master/nomad_job_files/templates/alert.rules"
 			  destination = "local/alert.rules.tpl"
@@ -102,12 +102,12 @@ job "faas-monitoring" {
       }
 
       config {
-        image = "prom/prometheus:v1.5.2"
+        image = "prom/prometheus:v2.3.1"
 
         args = [
-          "-config.file=/etc/prometheus/prometheus.yml",
-          "-storage.local.path=/prometheus",
-          "-storage.local.memory-chunks=10000",
+          "--config.file=/etc/prometheus/prometheus.yml",
+          "--storage.tsdb.path=/prometheus",
+          "--storage.tsdb.retention=180d",
         ]
 
         dns_servers = ["${NOMAD_IP_http}", "8.8.8.8", "8.8.8.4"]
@@ -138,7 +138,7 @@ job "faas-monitoring" {
       service {
         port = "http"
         name = "prometheus"
-        tags = ["faas"]
+        tags = ["monitoring"]
 
         check {
           type     = "http"
@@ -154,7 +154,7 @@ job "faas-monitoring" {
       driver = "docker"
 
       config {
-        image = "grafana/grafana:4.5.2"
+        image = "grafana/grafana:5.2.1"
 
         port_map {
           http = 3000
