@@ -28,22 +28,9 @@ job "monitoring" {
 				mode        = "file"
 			}
 
-			artifact {
-			  source      = "https://raw.githubusercontent.com/hashicorp/faas-nomad/master/nomad_job_files/templates/alert.rules"
-			  destination = "local/alert.rules.tpl"
-				mode        = "file"
-			}
-
       template {
         source        = "local/prometheus.yml.tpl"
         destination   = "/etc/prometheus/prometheus.yml"
-        change_mode   = "noop"
-        change_signal = "SIGINT"
-      }
-
-      template {
-        source        = "local/alert.rules.tpl"
-        destination   = "/etc/prometheus/alert.rules"
         change_mode   = "noop"
         change_signal = "SIGINT"
       }
@@ -65,7 +52,6 @@ job "monitoring" {
 
         volumes = [
           "etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml",
-          "etc/prometheus/alert.rules:/etc/prometheus/alert.rules",
         ]
       }
 
