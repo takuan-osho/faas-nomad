@@ -23,7 +23,7 @@ job "monitoring" {
       driver = "docker"
 
 			artifact {
-			  source      = "https://raw.githubusercontent.com/hashicorp/faas-nomad/master/nomad_job_files/templates/prometheus.yml"
+			  source      = "https://raw.githubusercontent.com/takuan-osho/faas-nomad/dev/test/nomad_job_files/monitoring.hcl"
 			  destination = "local/prometheus.yml.tpl"
 				mode        = "file"
 			}
