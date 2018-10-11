@@ -2,7 +2,7 @@ job "faas-monitoring" {
   datacenters = ["dc1"]
 
   type = "service"
-  
+
   constraint {
     attribute = "${attr.cpu.arch}"
     operator  = "!="
@@ -80,7 +80,7 @@ job "faas-monitoring" {
 			  destination = "local/prometheus.yml.tpl"
 				mode        = "file"
 			}
-			
+
 			artifact {
 			  source      = "https://raw.githubusercontent.com/hashicorp/faas-nomad/master/nomad_job_files/templates/alert.rules"
 			  destination = "local/alert.rules.tpl"
@@ -102,12 +102,12 @@ job "faas-monitoring" {
       }
 
       config {
-        image = "prom/prometheus:v1.5.2"
+        image = "prom/prometheus:v2.4.3"
 
         args = [
-          "-config.file=/etc/prometheus/prometheus.yml",
-          "-storage.local.path=/prometheus",
-          "-storage.local.memory-chunks=10000",
+          "--config.file=/etc/prometheus/prometheus.yml",
+          "--storage.tsdb.path=/prometheus",
+          "--storage.tsdb.retention=31d",
         ]
 
         dns_servers = ["${NOMAD_IP_http}", "8.8.8.8", "8.8.8.4"]
