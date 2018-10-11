@@ -37,6 +37,12 @@ scrape_configs:
       - server: {{ env "NOMAD_IP_http" }}:8500
         services: ["statsd"]
 
+  - job_name: "nomad"
+    scrape_interval: 5s
+    consul_sd_configs:
+      - server: {{ env "NOMAD_IP_http" }}:8500
+        services: ["nomad-client", "nomad"]
+
 alerting:
   alertmanagers:
     - consul_sd_configs:
