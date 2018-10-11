@@ -1,5 +1,5 @@
 global:
-  scrape_interval:     15s 
+  scrape_interval:     15s
   evaluation_interval: 15s
   scrape_timeout: 10s
 
@@ -9,8 +9,8 @@ global:
     monitor: 'faas-monitor'
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
-rule_files:
-  - 'alert.rules'
+# rule_files:
+#   - 'alert.rules'
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -30,7 +30,7 @@ scrape_configs:
     consul_sd_configs:
       - server: {{ env "NOMAD_IP_http" }}:8500
         services: ["gateway"]
-  
+
   - job_name: "statsd"
     scrape_interval: 5s
     consul_sd_configs:
