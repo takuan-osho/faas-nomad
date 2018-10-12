@@ -42,6 +42,9 @@ scrape_configs:
     consul_sd_configs:
       - server: {{ env "NOMAD_IP_http" }}:8500
         services: ["nomad-client", "nomad"]
+    metrics_path: /v1/metrics
+    params:
+      format: ['prometheus']
 
 alerting:
   alertmanagers:
